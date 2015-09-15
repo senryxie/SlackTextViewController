@@ -201,22 +201,23 @@ static NSString *AutoCompletionCellIdentifier = @"AutoCompletionCell";
 
 - (void)didLongPressCell:(UIGestureRecognizer *)gesture
 {
-#ifdef __IPHONE_8_0
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    alertController.modalPresentationStyle = UIModalPresentationPopover;
-    alertController.popoverPresentationController.sourceView = gesture.view.superview;
-    alertController.popoverPresentationController.sourceRect = gesture.view.frame;
-    
-    [alertController addAction:[UIAlertAction actionWithTitle:@"Edit Message" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    if (SLK_IS_IOS8_AND_HIGHER && [UIAlertController class]) {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        alertController.modalPresentationStyle = UIModalPresentationPopover;
+        alertController.popoverPresentationController.sourceView = gesture.view.superview;
+        alertController.popoverPresentationController.sourceRect = gesture.view.frame;
+        
+        [alertController addAction:[UIAlertAction actionWithTitle:@"Edit Message" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [self editCellMessage:gesture];
+        }]];
+        
+        [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:NULL]];
+        
+        [self.navigationController presentViewController:alertController animated:YES completion:nil];
+    }
+    else {
         [self editCellMessage:gesture];
-    }]];
-    
-    [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:NULL]];
-    
-    [self.navigationController presentViewController:alertController animated:YES completion:nil];
-#else
-    [self editCellMessage:gesture];
-#endif
+    }
 }
 
 - (void)editCellMessage:(UIGestureRecognizer *)gesture
